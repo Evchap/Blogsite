@@ -1,15 +1,13 @@
 from django.contrib.auth import logout, login
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.core.paginator import Paginator
-from django.http import HttpResponse, HttpResponseNotFound, Http404
-from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse, HttpResponseNotFound
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import *
-from .models import *
 from .utils import *
 
 class WomenHome(DataMixin, ListView):
@@ -20,7 +18,9 @@ class WomenHome(DataMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         c_def = self.get_user_context(title="Главная страница")
-        return dict(list(context.items()) + list(c_def.items()))
+        return dict(list(context.items()) + list(c_def.items())) # Y
+        # return context | c_def # n
+        # return context.update(c_def) # n
 
     def get_queryset(self):
         return Women.objects.filter(is_published=True)
@@ -45,7 +45,9 @@ class AddPage(LoginRequiredMixin, DataMixin, CreateView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         c_def = self.get_user_context(title="Добавление статьи")
-        return dict(list(context.items()) + list(c_def.items()))
+        return dict(list(context.items()) + list(c_def.items()))  # y
+        # return context | c_def # n
+        # return context.update(c_def) # n
 
 
 def contact(request):
@@ -66,7 +68,8 @@ class ShowPost(DataMixin, DetailView):
         context = super().get_context_data(**kwargs)
         c_def = self.get_user_context(title=context['post'])
         return dict(list(context.items()) + list(c_def.items()))
-
+        # return context | c_def # n
+        # return context.update(c_def) # n
 
 class WomenCategory(DataMixin, ListView):
     model = Women
@@ -82,7 +85,8 @@ class WomenCategory(DataMixin, ListView):
         c_def = self.get_user_context(title='Категория - ' + str(context['posts'][0].cat),
                                       cat_selected=context['posts'][0].cat_id)
         return dict(list(context.items()) + list(c_def.items()))
-
+        # return context | c_def  # n
+        # return context.update(c_def) # n
 
 class RegisterUser(DataMixin, CreateView):
     form_class = RegisterUserForm
@@ -92,7 +96,9 @@ class RegisterUser(DataMixin, CreateView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         c_def = self.get_user_context(title="Регистрация")
-        return dict(list(context.items()) + list(c_def.items()))
+        return dict(list(context.items()) + list(c_def.items())) # y
+        # return context | c_def # n
+        # return context.update(c_def) # n
 
     def form_valid(self, form):
         user = form.save()
@@ -108,6 +114,8 @@ class LoginUser(DataMixin, LoginView):
         context = super().get_context_data(**kwargs)
         c_def = self.get_user_context(title="Авторизация")
         return dict(list(context.items()) + list(c_def.items()))
+        # return context | c_def  # n
+        # return context.update(c_def) # n
 
     def get_success_url(self):
         return reverse_lazy('home')
